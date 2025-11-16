@@ -32,19 +32,9 @@ class MainActivity : ComponentActivity() {
                 // This NavHost will control your whole app
                 val navController = rememberNavController()
 
-                NavHost(navController = navController, startDestination = "login") {
+                NavHost(navController = navController, startDestination = "dashboard") {
 
-                    // Route 1: Login
-                    composable("login") {
-                        // Your team member's LoginScreen
-                        // For now, a placeholder button:
-                        Button(onClick = {
-                            val intent = Intent(this@MainActivity, LoginActivity::class.java)
-                            startActivity(intent)
-                        }) { Text("Go to Login Page") }
-                    }
-
-                    // Route 2: Dashboard
+                    // Route 1: Dashboard
                     composable("dashboard") {
                         DashboardScreen(
                             db = db,
@@ -60,7 +50,7 @@ class MainActivity : ComponentActivity() {
                         )
                     }
 
-                    // Route 3: Your Data Input Form
+                    // Route 2: Your Data Input Form
                     composable("data_input") {
                         CarbonFootprintInput(
                             db = db,
@@ -70,7 +60,7 @@ class MainActivity : ComponentActivity() {
                         )
                     }
 
-                    // Route 4: Analytics
+                    // Route 3: Analytics
                     composable("analytics") {
                         // Your team member's AnalyticsScreen
                         // For now, a placeholder:
@@ -79,7 +69,7 @@ class MainActivity : ComponentActivity() {
                         }) { Text("Analytics Page (Placeholder)") }
                     }
 
-                    // Route 5: Recommendations
+                    // Route 4: Recommendations
                     composable("recommendations") {
                         RecommendationsScreen(
                             db = db,
