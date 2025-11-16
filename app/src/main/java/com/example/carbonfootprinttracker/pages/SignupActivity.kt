@@ -9,6 +9,11 @@ import androidx.appcompat.app.AppCompatActivity
 import androidx.core.view.ViewCompat
 import androidx.core.view.WindowInsetsCompat
 import com.google.android.material.button.MaterialButton
+import android.text.SpannableString
+import android.text.Spanned
+import android.text.style.ForegroundColorSpan
+import android.text.style.UnderlineSpan
+import android.graphics.Color
 
 class SignupActivity : AppCompatActivity() {
 
@@ -31,6 +36,27 @@ class SignupActivity : AppCompatActivity() {
         // Find views
         val loginText = findViewById<TextView>(R.id.loginText)
         val signupButton = findViewById<MaterialButton>(R.id.signupButton)
+
+        // Make "Sign In" text look clickable
+        val fullText = getString(R.string.already_have_account)
+        val spannableString = SpannableString(fullText)
+        val signInStart = fullText.indexOf("Sign In")
+        if (signInStart != -1) {
+            val signInEnd = signInStart + "Sign In".length
+            spannableString.setSpan(
+                ForegroundColorSpan(Color.parseColor("#FF6200EE")), // primaryColor
+                signInStart,
+                signInEnd,
+                Spanned.SPAN_EXCLUSIVE_EXCLUSIVE
+            )
+            spannableString.setSpan(
+                UnderlineSpan(),
+                signInStart,
+                signInEnd,
+                Spanned.SPAN_EXCLUSIVE_EXCLUSIVE
+            )
+        }
+        loginText.text = spannableString
 
         // Set up click listeners
         loginText.setOnClickListener {

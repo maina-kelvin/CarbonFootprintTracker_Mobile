@@ -13,6 +13,7 @@ import androidx.compose.ui.unit.dp
 import com.example.carbonfootprinttracker.data.AppDatabase
 import com.example.carbonfootprinttracker.data.CarbonEmission
 import kotlinx.coroutines.launch
+import com.example.carbonfootprinttracker.pages.AppHeader
 
 // Added for the Dropdown Menu
 import androidx.compose.material3.ExposedDropdownMenuBox
@@ -31,7 +32,10 @@ import kotlin.math.max
 @OptIn(ExperimentalMaterial3Api::class) // Required for ExposedDropdownMenuBox
 @Composable
 fun CarbonFootprintInput(db: AppDatabase, onGoToHome: () -> Unit) {
-
+    Surface(
+        modifier = Modifier.fillMaxSize(),
+        color = Color.White
+    ) {
     // --- STATE ---
     var category by remember { mutableStateOf("Transport") }
     var result by remember { mutableStateOf<Double?>(null) }
@@ -67,10 +71,12 @@ fun CarbonFootprintInput(db: AppDatabase, onGoToHome: () -> Unit) {
     Column(
         modifier = Modifier
             .fillMaxSize()
-            .padding(65.dp),
+            .padding(horizontal = 25.dp, vertical = 24.dp),
         verticalArrangement = Arrangement.Top,
         horizontalAlignment = Alignment.CenterHorizontally
     ) {
+
+        Spacer(Modifier.height(16.dp))
         Text("Enter Your Emissions", style = MaterialTheme.typography.headlineSmall)
         Spacer(Modifier.height(20.dp))
 
@@ -334,6 +340,7 @@ fun CarbonFootprintInput(db: AppDatabase, onGoToHome: () -> Unit) {
                 style = MaterialTheme.typography.headlineSmall
             )
         }
+    }
     }
 }
 

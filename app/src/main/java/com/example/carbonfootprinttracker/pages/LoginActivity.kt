@@ -10,6 +10,11 @@ import androidx.core.view.ViewCompat
 import androidx.core.view.WindowInsetsCompat
 import com.google.android.material.button.MaterialButton
 import com.example.carbonfootprinttracker.MainActivity
+import android.text.SpannableString
+import android.text.Spanned
+import android.text.style.ForegroundColorSpan
+import android.text.style.UnderlineSpan
+import android.graphics.Color
 
 class LoginActivity : AppCompatActivity() {
 
@@ -36,6 +41,27 @@ class LoginActivity : AppCompatActivity() {
         val signUpText: TextView = findViewById(R.id.signUpText)
         val loginButton: MaterialButton = findViewById(R.id.loginButton)
         // TODO: forgot password flow
+
+        // Make "Sign Up" text look clickable
+        val fullText = getString(R.string.dont_have_account)
+        val spannableString = SpannableString(fullText)
+        val signUpStart = fullText.indexOf("Sign Up")
+        if (signUpStart != -1) {
+            val signUpEnd = signUpStart + "Sign Up".length
+            spannableString.setSpan(
+                ForegroundColorSpan(Color.parseColor("#FF6200EE")), // primaryColor
+                signUpStart,
+                signUpEnd,
+                Spanned.SPAN_EXCLUSIVE_EXCLUSIVE
+            )
+            spannableString.setSpan(
+                UnderlineSpan(),
+                signUpStart,
+                signUpEnd,
+                Spanned.SPAN_EXCLUSIVE_EXCLUSIVE
+            )
+        }
+        signUpText.text = spannableString
 
         // Set up click listeners
         signUpText.setOnClickListener {

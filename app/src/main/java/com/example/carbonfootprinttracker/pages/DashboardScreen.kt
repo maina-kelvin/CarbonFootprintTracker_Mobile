@@ -24,6 +24,7 @@ import com.example.carbonfootprinttracker.ui.theme.Purple40
 import com.example.carbonfootprinttracker.ui.theme.PurpleGrey40
 import java.text.SimpleDateFormat
 import java.util.*
+import com.example.carbonfootprinttracker.pages.AppHeader
 
 val AccentGreen = Color(0xFF2E7D32)
 
@@ -54,7 +55,15 @@ fun DashboardScreen(
             horizontalAlignment = Alignment.CenterHorizontally
         ) {
 
-            // Header
+
+            item {
+                AppHeader(
+                    title = "Carbon Tracker",
+                    subtitle = "Track Your Environmental Impact"
+                )
+            }
+
+            // Welcome Card
             item {
                 Card(
                     modifier = Modifier.fillMaxWidth(),
@@ -208,7 +217,7 @@ fun DashboardScreen(
                 }
             }
 
-            // Recent Entries Title
+
             item {
                 Text(
                     text = "Recent Entries",
@@ -253,7 +262,7 @@ fun DashboardScreen(
     }
 }
 
-// ---- Components ---- //
+
 
 @Composable
 private fun StatCard(

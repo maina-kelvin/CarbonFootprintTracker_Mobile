@@ -18,6 +18,7 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import com.example.carbonfootprinttracker.data.AppDatabase
 import com.example.carbonfootprinttracker.data.CarbonEmission
+import com.example.carbonfootprinttracker.pages.AppHeader
 
 data class Recommendation(
     val category: String,
@@ -44,13 +45,18 @@ fun RecommendationsScreen(
         generateRecommendations(emissions)
     }
 
+    Surface(
+        modifier = Modifier.fillMaxSize(),
+        color = Color.White
+    ) {
     LazyColumn(
         modifier = Modifier
             .fillMaxSize()
-            .padding(horizontal = 65.dp, vertical = 40.dp),
+            .padding(horizontal = 25.dp, vertical = 24.dp),
         verticalArrangement = Arrangement.spacedBy(20.dp),
         horizontalAlignment = Alignment.CenterHorizontally
     ) {
+
         // Header
         item {
             Text(
@@ -183,6 +189,7 @@ fun RecommendationsScreen(
                 Text("Back to Dashboard", color = Color(0xFF424242))
             }
         }
+    }
     }
 }
 
