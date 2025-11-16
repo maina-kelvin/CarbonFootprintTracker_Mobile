@@ -5,14 +5,15 @@ import androidx.room.RoomDatabase
 import androidx.room.TypeConverters
 
 @Database(
-    entities = [CarbonEmission::class],
-    version = 1,
+    entities = [CarbonEmission::class, ActivityEntry::class],
+    version = 2,
     exportSchema = false
 )
 @TypeConverters(DateConverter::class)
 abstract class AppDatabase : RoomDatabase() {
 
     abstract fun carbonEmissionDao(): CarbonEmissionDao
+    abstract fun activityEntryDao(): ActivityEntryDao
 
     companion object {
         @Volatile

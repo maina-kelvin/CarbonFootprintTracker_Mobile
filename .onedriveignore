@@ -1,0 +1,7 @@
+# Exclude build directories from OneDrive sync
+app/build/
+build/
+.gradle/
+*.iml
+local.properties
+

@@ -13,6 +13,8 @@ import androidx.navigation.compose.rememberNavController
 import com.example.carbonfootprinttracker.data.AppDatabase
 
 import com.example.carbonfootprinttracker.pages.CarbonFootprintInput
+import com.example.carbonfootprinttracker.pages.DashboardScreen
+import com.example.carbonfootprinttracker.pages.RecommendationsScreen
 
 // Import your team's other screens here
 
@@ -28,7 +30,7 @@ class MainActivity : ComponentActivity() {
                 // This NavHost will control your whole app
                 val navController = rememberNavController()
 
-                NavHost(navController = navController, startDestination = "login") {
+                NavHost(navController = navController, startDestination = "dashboard") {
 
                     // Route 1: Login
                     composable("login") {
@@ -43,16 +45,18 @@ class MainActivity : ComponentActivity() {
 
                     // Route 2: Dashboard
                     composable("dashboard") {
-                        // Your team member's DashboardScreen
-                        // For now, placeholder buttons:
-                        Column {
-                            Button(onClick = { navController.navigate("data_input") }) {
-                                Text("Go to Input Form (Placeholder)")
+                        DashboardScreen(
+                            db = db,
+                            onNavigateToInput = {
+                                navController.navigate("data_input")
+                            },
+                            onNavigateToAnalytics = {
+                                navController.navigate("analytics")
+                            },
+                            onNavigateToRecommendations = {
+                                navController.navigate("recommendations")
                             }
-                            Button(onClick = { navController.navigate("analytics") }) {
-                                Text("Go to Analytics (Placeholder)")
-                            }
-                        }
+                        )
                     }
 
                     // Route 3: Your Data Input Form
@@ -72,6 +76,16 @@ class MainActivity : ComponentActivity() {
                         Button(onClick = {
                             navController.navigate("dashboard") { launchSingleTop = true }
                         }) { Text("Analytics Page (Placeholder)") }
+                    }
+
+                    // Route 5: Recommendations
+                    composable("recommendations") {
+                        RecommendationsScreen(
+                            db = db,
+                            onNavigateToDashboard = {
+                                navController.navigate("dashboard") { launchSingleTop = true }
+                            }
+                        )
                     }
                 }
             }
