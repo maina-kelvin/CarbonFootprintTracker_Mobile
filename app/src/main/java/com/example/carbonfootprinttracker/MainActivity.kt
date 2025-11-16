@@ -11,8 +11,10 @@ import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
 import com.example.carbonfootprinttracker.data.AppDatabase
+import android.content.Intent
 
 import com.example.carbonfootprinttracker.pages.CarbonFootprintInput
+import com.example.carbonfootprinttracker.pages.LoginActivity
 import com.example.carbonfootprinttracker.pages.DashboardScreen
 import com.example.carbonfootprinttracker.pages.RecommendationsScreen
 
@@ -30,17 +32,16 @@ class MainActivity : ComponentActivity() {
                 // This NavHost will control your whole app
                 val navController = rememberNavController()
 
-                NavHost(navController = navController, startDestination = "dashboard") {
+                NavHost(navController = navController, startDestination = "login") {
 
                     // Route 1: Login
                     composable("login") {
                         // Your team member's LoginScreen
                         // For now, a placeholder button:
                         Button(onClick = {
-                            navController.navigate("dashboard") {
-                                popUpTo("login") { inclusive = true }
-                            }
-                        }) { Text("Log In (Placeholder)") }
+                            val intent = Intent(this@MainActivity, LoginActivity::class.java)
+                            startActivity(intent)
+                        }) { Text("Go to Login Page") }
                     }
 
                     // Route 2: Dashboard

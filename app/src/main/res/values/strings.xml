@@ -1,3 +1,34 @@
 <resources>
     <string name="app_name">CarbonFootprintTracker</string>
+
+    <!-- Add all these missing strings -->
+    <string name="carbon_tracker">Carbon Tracker</string>
+    <string name="track_environmental_impact">Track Your Environmental Impact</string>
+    <string name="welcome_back">Welcome Back</string>
+    <string name="sign_in_continue">Sign in to continue tracking your carbon footprint</string>
+    <string name="email">Email</string>
+    <string name="password">Password</string>
+    <string name="remember_me">Remember me</string>
+    <string name="forgot_password">Forgot Password?</string>
+    <string name="sign_in">Sign In</string>
+    <string name="or_continue_with">or continue with</string>
+    <string name="google">Google</string>
+    <string name="facebook">Facebook</string>
+    <string name="dont_have_account">Don\'t have an account? Sign Up</string>
+
+    <string name="join_carbon_tracker">Join Carbon Tracker</string>
+    <string name="start_tracking_today">Start tracking your environmental impact today</string>
+    <string name="create_account">Create Account</string>
+    <string name="fill_details">Fill in your details to get started</string>
+    <string name="full_name">Full Name</string>
+    <string name="confirm_password">Confirm Password</string>
+    <string name="terms_agreement">I agree to the Terms of Service and Privacy Policy</string>
+    <string name="create_account_button">Create Account</string>
+    <string name="or_sign_up_with">or sign up with</string>
+    <string name="already_have_account">Already have an account? Sign In</string>
+
+    <string name="leaf_icon_description">Leaf icon representing environmental tracking</string>
+    <string name="email_icon_description">Email icon</string>
+    <string name="password_icon_description">Password icon</string>
+    <string name="person_icon_description">Person icon</string>
 </resources>

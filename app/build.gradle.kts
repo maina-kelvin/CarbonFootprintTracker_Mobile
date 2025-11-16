@@ -70,6 +70,9 @@ dependencies {
     // Icons
     implementation("androidx.compose.material:material-icons-extended:1.6.6")
 
+    //Material components
+    implementation("com.google.android.material:material:1.11.0")
+
     // Testing
     testImplementation(libs.junit)
     androidTestImplementation(libs.androidx.junit)
