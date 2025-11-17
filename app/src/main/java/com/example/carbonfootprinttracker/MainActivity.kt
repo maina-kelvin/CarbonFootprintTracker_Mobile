@@ -28,6 +28,8 @@ import com.example.carbonfootprinttracker.pages.RecommendationsScreen
 import com.example.carbonfootprinttracker.pages.AppHeader
 import androidx.compose.material3.Surface
 import androidx.compose.ui.graphics.Color
+import com.example.carbonfootprinttracker.pages.AnalyticsScreen
+
 
 // Import your team's other screens here
 
@@ -73,29 +75,12 @@ class MainActivity : ComponentActivity() {
 
                     // Route 3: Analytics
                     composable("analytics") {
-                        // Your team member's AnalyticsScreen
-                        // For now, a placeholder:
-                        Surface(
-                            modifier = Modifier.fillMaxSize(),
-                            color = Color.White
-                        ) {
-                            Column(
-                                modifier = Modifier
-                                    .fillMaxSize()
-                                    .padding(horizontal = 25.dp, vertical = 24.dp),
-                                horizontalAlignment = Alignment.CenterHorizontally,
-                                verticalArrangement = Arrangement.Top
-                            ) {
-                                AppHeader(
-                                    title = "Carbon Footprint Tracker",
-                                    subtitle = "Track Your Environmental Impact"
-                                )
-                                Spacer(modifier = Modifier.height(32.dp))
-                                Button(onClick = {
-                                    navController.navigate("dashboard") { launchSingleTop = true }
-                                }) { Text("Analytics Page (Placeholder)") }
+                        AnalyticsScreen(
+                            db = db,
+                            onBack = {
+                                navController.navigate("dashboard") { launchSingleTop = true }
                             }
-                        }
+                        )
                     }
 
                     // Route 4: Recommendations

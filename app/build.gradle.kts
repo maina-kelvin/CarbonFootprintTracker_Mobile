@@ -73,6 +73,9 @@ dependencies {
     //Material components
     implementation("com.google.android.material:material:1.11.0")
 
+    //Charts
+    implementation("com.github.tehras:charts:0.2.4-alpha")
+
     // Testing
     testImplementation(libs.junit)
     androidTestImplementation(libs.androidx.junit)
