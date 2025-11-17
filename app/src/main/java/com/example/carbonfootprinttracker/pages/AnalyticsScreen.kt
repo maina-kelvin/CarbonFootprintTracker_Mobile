@@ -30,132 +30,128 @@ import com.github.tehras.charts.piechart.renderer.SimpleSliceDrawer
 import java.text.SimpleDateFormat
 import java.util.*
 
-val ChartGreen = Color(0xFF2E7D32)
-val ChartYellow = Color(0xFFFBC02D)
-val ChartRed = Color(0xFFD32F2F)
+val ChartColors = listOf(
+    Color(0xFF2E7D32),
+    Color(0xFFFBC02D),
+    Color(0xFFD32F2F),
+    Color(0xFF1976D2),
+    Color(0xFF7B1FA2)
+)
 
 @Composable
-fun AnalyticsScreen(
-    db: AppDatabase,
-    onBack: () -> Unit
-) {
+fun AnalyticsScreen(db: AppDatabase, onBack: () -> Unit) {
     val dao = db.carbonEmissionDao()
     val emissions by dao.getAllEmissions().collectAsState(initial = emptyList())
-
-    val dateFormatter = SimpleDateFormat("EEE", Locale.getDefault())
-
-    // WEEKLY BAR CHART DATA
-    val weeklyData = emissions.groupBy { dateFormatter.format(it.timestamp) }
-    val bars = weeklyData.map { (day, items) ->
-        BarChartData.Bar(
-            label = day,
-            value = items.sumOf { it.carbonEmission }.toFloat(),
-            color = Purple40
-        )
-    }
-
-    // CATEGORY PIE CHART DATA
-    val categoryData = emissions.groupBy { it.category }
-    val slices = categoryData.map { (_, list) ->
-        Slice(
-            value = list.sumOf { it.carbonEmission }.toFloat(),
-            color = listOf(ChartGreen, ChartYellow, ChartRed, Purple40).random()
-        )
-    }
-
-    val pieLegend = categoryData.map { (cat, list) ->
-        cat to listOf(ChartGreen, ChartYellow, ChartRed, Purple40).random()
-    }
+    val dateFormatter = SimpleDateFormat("EEE, dd MMM", Locale.getDefault())
 
     val totalEmission = emissions.sumOf { it.carbonEmission }
     val avgEmission = if (emissions.isNotEmpty()) totalEmission / emissions.size else 0.0
+    val maxEmission = emissions.maxByOrNull { it.carbonEmission }?.carbonEmission ?: 0.0
+    val mostUsedFuel = emissions.groupBy { it.fuelType }
+        .maxByOrNull { it.value.size }?.key ?: "N/A"
+
+    // --- WEEKLY BAR CHART ---
+    val weeklyData = emissions.groupBy { dateFormatter.format(it.timestamp) }
+    val weeklyBars = weeklyData.map { (day, list) ->
+        BarChartData.Bar(label = day, value = list.sumOf { it.carbonEmission }.toFloat(), color = Purple40)
+    }
+
+    // --- CATEGORY PIE CHART ---
+    val categoryData = emissions.groupBy { it.category }
+    val categoryColorMap = categoryData.keys
+        .withIndex()
+        .associate { it.value to ChartColors[it.index % ChartColors.size] }
+    val categorySlices = categoryData.map { (cat, list) ->
+        Slice(value = list.sumOf { it.carbonEmission }.toFloat(), color = categoryColorMap[cat] ?: Purple40)
+    }
+
+    // --- FUEL TYPE PIE CHART ---
+    val fuelData = emissions.groupBy { it.fuelType ?: "Unknown" }
+    val fuelColorMap = fuelData.keys
+        .withIndex()
+        .associate { it.value to ChartColors[it.index % ChartColors.size] }
+    val fuelSlices = fuelData.map { (fuel, list) ->
+        Slice(value = list.sumOf { it.carbonEmission }.toFloat(), color = fuelColorMap[fuel] ?: Purple40)
+    }
+
+    // --- TOP 3 HIGH EMISSION DAYS ---
+    val topDays = weeklyData.entries
+        .sortedByDescending { it.value.sumOf { e -> e.carbonEmission } }
+        .take(3)
+        .map { "${it.key}: ${it.value.sumOf { e -> e.carbonEmission }} kg CO₂" }
 
     Surface(modifier = Modifier.fillMaxSize(), color = Color.White) {
         Column(
-            modifier = Modifier
-                .fillMaxSize()
-                .padding(horizontal = 20.dp)
-                .verticalScroll(rememberScrollState()),
+            modifier = Modifier.fillMaxSize().padding(20.dp).verticalScroll(rememberScrollState()),
             verticalArrangement = Arrangement.spacedBy(20.dp)
         ) {
-            Spacer(modifier = Modifier.height(10.dp))
-
-            AppHeader(
-                title = "Analytics",
-                subtitle = "Visual insights into your carbon footprint"
-            )
-
             IconButton(onClick = onBack) {
                 Icon(Icons.Default.ArrowBack, contentDescription = "Back", tint = Purple40)
             }
 
+            // SUMMARY CARDS
             SummaryCard("Total Emissions", "%.2f kg CO₂".format(totalEmission))
             SummaryCard("Average per Entry", "%.2f kg CO₂".format(avgEmission))
+            SummaryCard("Max Single Entry", "%.2f kg CO₂".format(maxEmission))
+            SummaryCard("Most Used Fuel", mostUsedFuel)
 
             // WEEKLY BAR CHART
-            Text(
-                "Weekly Emissions",
-                style = MaterialTheme.typography.titleMedium.copy(
-                    fontWeight = FontWeight.Bold,
-                    color = Purple40
-                )
-            )
-            if (bars.isNotEmpty()) {
+            Text("Weekly Emissions", style = MaterialTheme.typography.titleMedium.copy(fontWeight = FontWeight.Bold, color = Purple40))
+            if (weeklyBars.isNotEmpty()) {
                 BarChart(
-                    barChartData = BarChartData(bars = bars),
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .height(260.dp),
+                    barChartData = BarChartData(bars = weeklyBars),
+                    modifier = Modifier.fillMaxWidth().height(260.dp),
                     animation = simpleChartAnimation(),
                     barDrawer = SimpleBarDrawer(),
                     xAxisDrawer = SimpleXAxisDrawer(),
                     yAxisDrawer = SimpleYAxisDrawer(),
                     labelDrawer = SimpleValueDrawer()
                 )
-            } else {
-                EmptyChartMessage()
-            }
+            } else EmptyChartMessage()
 
             // CATEGORY PIE CHART
-            Text(
-                "Emissions by Category",
-                style = MaterialTheme.typography.titleMedium.copy(
-                    fontWeight = FontWeight.Bold,
-                    color = Purple40
-                )
-            )
-            if (slices.isNotEmpty()) {
+            Text("Emissions by Category", style = MaterialTheme.typography.titleMedium.copy(fontWeight = FontWeight.Bold, color = Purple40))
+            if (categorySlices.isNotEmpty()) {
                 PieChart(
-                    pieChartData = PieChartData(slices = slices),
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .height(280.dp),
+                    pieChartData = PieChartData(slices = categorySlices),
+                    modifier = Modifier.fillMaxWidth().height(260.dp),
                     animation = simpleChartAnimation(),
                     sliceDrawer = SimpleSliceDrawer()
                 )
-
-                // MANUAL LEGEND
-                Column(modifier = Modifier.padding(top = 8.dp)) {
-                    pieLegend.forEach { (category, color) ->
-                        Row(
-                            verticalAlignment = Alignment.CenterVertically,
-                            modifier = Modifier.padding(vertical = 2.dp)
-                        ) {
-                            Box(
-                                modifier = Modifier
-                                    .size(16.dp)
-                                    .background(color = color)
-                            )
+                Column {
+                    categoryColorMap.forEach { (category, color) ->
+                        Row(verticalAlignment = Alignment.CenterVertically, modifier = Modifier.padding(vertical = 2.dp)) {
+                            Box(modifier = Modifier.size(16.dp).background(color))
                             Spacer(modifier = Modifier.width(8.dp))
-                            Text(category, color = PurpleGrey40)
+                            Text(category ?: "Other", color = PurpleGrey40)
                         }
                     }
                 }
-            } else {
-                EmptyChartMessage()
-            }
+            } else EmptyChartMessage()
 
-            Spacer(modifier = Modifier.height(50.dp))
+            // FUEL TYPE PIE CHART
+            Text("Emissions by Fuel Type", style = MaterialTheme.typography.titleMedium.copy(fontWeight = FontWeight.Bold, color = Purple40))
+            if (fuelSlices.isNotEmpty()) {
+                PieChart(
+                    pieChartData = PieChartData(slices = fuelSlices),
+                    modifier = Modifier.fillMaxWidth().height(260.dp),
+                    animation = simpleChartAnimation(),
+                    sliceDrawer = SimpleSliceDrawer()
+                )
+                Column {
+                    fuelColorMap.forEach { (fuel, color) ->
+                        Row(verticalAlignment = Alignment.CenterVertically, modifier = Modifier.padding(vertical = 2.dp)) {
+                            Box(modifier = Modifier.size(16.dp).background(color))
+                            Spacer(modifier = Modifier.width(8.dp))
+                            Text(fuel, color = PurpleGrey40)
+                        }
+                    }
+                }
+            } else EmptyChartMessage()
+
+            // TOP 3 HIGH EMISSION DAYS
+            Text("Top 3 High Emission Days", style = MaterialTheme.typography.titleMedium.copy(fontWeight = FontWeight.Bold, color = Purple40))
+            if (topDays.isNotEmpty()) topDays.forEach { SummaryCard("High Emission Day", it) } else EmptyChartMessage()
         }
     }
 }
@@ -169,22 +165,12 @@ fun SummaryCard(label: String, value: String) {
     ) {
         Column(modifier = Modifier.padding(16.dp)) {
             Text(label, color = PurpleGrey40)
-            Text(
-                value,
-                style = MaterialTheme.typography.headlineSmall.copy(
-                    fontWeight = FontWeight.Bold,
-                    color = Purple40
-                )
-            )
+            Text(value, style = MaterialTheme.typography.headlineSmall.copy(fontWeight = FontWeight.Bold, color = Purple40))
         }
     }
 }
 
 @Composable
 fun EmptyChartMessage() {
-    Text(
-        text = "No data available to display.",
-        color = PurpleGrey40,
-        modifier = Modifier.padding(8.dp)
-    )
+    Text("No data available to display.", color = PurpleGrey40, modifier = Modifier.padding(8.dp))
 }
